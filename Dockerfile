@@ -1,20 +1,13 @@
-FROM alpine:
-
-MAINTAINER zacksleo <zacksleo@gmail.com>
+FROM alpine
 
 ARG KUBE_VERSION="v1.18.6"
 
-ENV BUILD_DEPS="gettext"  \
-    RUNTIME_DEPS="libintl"
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-RUN set -x && \
-    apk add --update $RUNTIME_DEPS && \
-    apk add --virtual build_deps $BUILD_DEPS &&  \
+RUN apk add gettext curl && \
     cp /usr/bin/envsubst /usr/local/bin/envsubst && \
-    apk add kubectl && \
-    apk del build_deps && \
-    apk del --purge deps && \
     rm /var/cache/apk/*
 
- ENTRYPOINT ["kubectl"]
- CMD ["--help"]
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl
+
+RUN chmod u+x kubectl && mv kubectl /bin/kubectl
