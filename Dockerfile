@@ -11,3 +11,6 @@ RUN apk add gettext curl && \
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl
 
 RUN chmod u+x kubectl && mv kubectl /bin/kubectl
+
+ENTRYPOINT ["kubectl"]
+CMD ["--help"]
